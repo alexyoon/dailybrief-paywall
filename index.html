@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데일리 브리프 · 기사 유료 결제 데모 (워드프레스 플러그인 시연)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--ink:#111827;--sub:#4b5563;--mute:#9ca3af;--line:#e5e7eb;--bg:#f7f7f5;--card:#fff;--brand:#1e3a8a;--brand-l:#dbeafe;--acc:#0064ff;--ok:#15803d;--ok-l:#dcfce7;--warn:#b45309;--warn-l:#fef3c7;--bad:#b91c1c;--bad-l:#fee2e2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,-apple-system,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:15px}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.band{background:#fffbeb;color:#92400e;font-size:12.5px;text-align:center;padding:6px 10px;border-bottom:1px solid #fde68a}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.hin{max-width:1100px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:Georgia,serif;font-weight:700;font-size:22px;letter-spacing:-.02em}.logo b{color:var(--brand)}
+.nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border-radius:9px;font-weight:600;font-size:14px;white-space:nowrap}
+.bp{background:var(--brand);color:#fff}.bp:hover{background:#172f70}
+.bt{background:var(--acc);color:#fff}
+.bo{border:1px solid var(--line);background:#fff}.bo:hover{border-color:var(--brand);color:var(--brand)}
+.bs{padding:6px 11px;font-size:13px;border-radius:7px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+.grid{display:grid;gap:16px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.badge{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px}
+.paid{background:#111827;color:#fde68a}.free{background:#f3f4f6;color:var(--sub)}.own{background:var(--ok-l);color:var(--ok)}
+.b-ok{background:var(--ok-l);color:var(--ok)}.b-warn{background:var(--warn-l);color:var(--warn)}.b-bad{background:var(--bad-l);color:var(--bad)}.b-mute{background:#f3f4f6;color:var(--sub)}
+.art{display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:.15s}.art:hover{box-shadow:0 8px 24px rgba(0,0,0,.06);transform:translateY(-1px)}
+.thumb{height:140px;border-radius:9px;display:flex;align-items:flex-end;padding:12px;color:#fff;font-weight:700;font-size:13px}
+.art h3{font-size:17px;line-height:1.4;letter-spacing:-.01em}.meta{font-size:12.5px;color:var(--mute)}
+.reader{max-width:720px;margin:0 auto}
+.reader h1{font-size:30px;line-height:1.3;letter-spacing:-.03em;margin:10px 0}
+.reader .body p{margin:14px 0;font-size:17px;line-height:1.85}
+.hero{height:280px;border-radius:12px;margin:18px 0;display:flex;align-items:flex-end;padding:16px;color:#fff;font-size:13px}
+.lockbox{position:relative;margin-top:-90px;padding-top:90px;background:linear-gradient(to bottom,rgba(247,247,245,0),var(--bg) 70%)}
+.pw{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+.pw h3{font-size:19px}.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.opt{border:1.5px solid var(--line);border-radius:12px;padding:14px;text-align:left;background:#fff}.opt:hover{border-color:var(--brand)}
+.opt b{display:block;font-size:15px}.opt .pr{font-size:20px;font-weight:800;margin-top:4px}.opt small{color:var(--sub);font-size:12.5px}
+.bundles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.bun{border:1.5px solid var(--line);border-radius:12px;padding:12px;text-align:center;background:#fff}.bun:hover{border-color:var(--acc)}
+.bun .n{font-weight:800;font-size:18px}.bun .p{font-weight:700}.bun .d{font-size:12px;color:var(--acc);font-weight:700}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}th{background:#f9fafb;text-align:left;color:var(--sub);font-size:12.5px;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 11px;border-bottom:1px solid #f1f2f4;white-space:nowrap}tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}.tab{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:14px}.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.kpi .l{font-size:12.5px;color:var(--sub)}.kpi .v{font-size:24px;font-weight:800}
+.note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:10px;padding:12px 14px;font-size:14px}
+.switch{position:relative;width:46px;height:26px;border-radius:99px;background:#d1d5db;transition:.2s}.switch.on{background:var(--brand)}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}.switch.on::after{left:23px}
+.mbg{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:14px}.mbg.on{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+.toss-h{background:var(--acc);color:#fff;padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+.toss-b{padding:20px}.pm{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.pm button{border:1.5px solid var(--line);border-radius:10px;padding:12px 6px;font-weight:600;font-size:13.5px}.pm button.on{border-color:var(--acc);color:var(--acc);background:#eff6ff}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:#111827;color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;z-index:200;max-width:92vw}.toast.on{opacity:1;transform:translateX(-50%)}
+.tech{font-size:14px}.tech h4{margin:14px 0 6px;font-size:15px}.tech code{background:#f3f4f6;padding:1px 6px;border-radius:5px;font-size:13px}
+.muted{color:var(--mute)}.sub{color:var(--sub)}.small{font-size:13px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.inp{border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;font:inherit}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr}.opts{grid-template-columns:1fr}.reader h1{font-size:24px}.hero{height:200px}.logo{font-size:19px}.nav .hide-m{display:none}.bundles{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="band">워드프레스 유료 기사 플러그인 시연용 데모입니다 · 가상 매체 · 실제 결제는 일어나지 않습니다</div>
+<header><div class="hin"><a href="#/" class="logo">Daily<b>Brief</b></a>
+<div class="nav" id="nav"></div></div></header>
+<main class="wrap" id="app"></main>
+<div class="mbg" id="mbg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY='dailybrief_paywall_v1';
+const PRICE=1000;
+const BUNDLES=[{n:3,p:2700,d:'10%'},{n:5,p:4000,d:'20%'},{n:10,p:7000,d:'30%'}];
+const COLORS=['#1e3a8a','#7c2d12','#065f46','#581c87','#9f1239','#334155','#0f766e','#a16207'];
+const won=n=>n.toLocaleString('ko-KR')+'원';
+const now=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+function seed(){return{
+  user:null, seq:1000,
+  articles:[
+    {id:101,cat:'경제',title:'금리 동결 이후, 중소기업 대출 시장에서 벌어지는 일',author:'김하린 기자',date:'2026-11-19',paid:true},
+    {id:102,cat:'산업',title:'반도체 장비 국산화, 2027년까지 남은 세 가지 숙제',author:'박도현 기자',date:'2026-11-19',paid:true},
+    {id:103,cat:'사회',title:'지방 소멸 대응, 청년 정착 지원금은 효과가 있었나',author:'이수아 기자',date:'2026-11-18',paid:false},
+    {id:104,cat:'테크',title:'생성형 AI 도입 1년, 국내 제조 현장의 실제 변화',author:'정민재 기자',date:'2026-11-18',paid:true},
+    {id:105,cat:'부동산',title:'전세 사기 이후 달라진 임대차 계약 체크리스트',author:'한지우 기자',date:'2026-11-17',paid:false},
+    {id:106,cat:'국제',title:'공급망 재편 속 동남아 생산기지 이전, 득과 실',author:'오세린 기자',date:'2026-11-17',paid:true}
+  ],
+  owned:{}, credits:0,
+  orders:[
+    {id:'ORD-0991',user:'reader02',type:'건별',item:'기사 #101',amount:1000,method:'카드',status:'결제 완료',at:'2026-11-19 09:12'},
+    {id:'ORD-0992',user:'reader03',type:'묶음 5건',item:'이용권 5건',amount:4000,method:'토스페이',status:'결제 완료',at:'2026-11-19 10:40'},
+    {id:'ORD-0993',user:'reader04',type:'건별',item:'기사 #104',amount:1000,method:'휴대폰',status:'환불 완료',at:'2026-11-18 21:05'}
+  ],
+  creditLog:[]
+};}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){S=seed()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)}
+function openM(h){$('#modal').innerHTML=h;$('#mbg').classList.add('on')}
+function closeM(){$('#mbg').classList.remove('on')}
+$('#mbg').onclick=e=>{if(e.target.id==='mbg')closeM()};
+const A=id=>S.articles.find(a=>a.id==id);
+const owns=id=>!!S.owned[id];
+const BODY=[
+ '기준금리가 세 차례 연속 동결되면서 시장의 관심은 "언제 내리느냐"에서 "누구에게 먼저 영향이 가느냐"로 옮겨가고 있다. 특히 담보 여력이 약한 중소기업은 금리보다 대출 한도가 먼저 줄어드는 현상을 겪고 있다.',
+ '취재 결과, 지난 분기 시중은행의 중소기업 신규 대출 승인율은 전년 대비 눈에 띄게 낮아졌다. 은행들은 연체율 관리를 이유로 심사 기준을 높였고, 그 빈자리를 2금융권과 정책자금이 채우고 있다.',
+ '문제는 정책자금의 배분 방식이다. 업력과 매출 기준을 충족하는 기업에 자금이 몰리면서, 정작 유동성이 가장 급한 초기 기업은 문턱을 넘지 못한다는 지적이 나온다.',
+ '전문가들은 "금리 인하 시점보다 중요한 것은 신용 경로가 막히지 않게 하는 것"이라며, 보증기관의 부분 보증 확대와 매출채권 기반 대출 활성화를 대안으로 제시했다.',
+ '한편 현장의 기업들은 비용 절감과 재고 축소로 버티는 중이다. 한 제조업체 대표는 "설비 투자는 내년으로 미뤘다. 지금은 운영자금을 지키는 게 먼저"라고 말했다.'
+];
+function nav(){
+  const u=S.user;
+  $('#nav').innerHTML=(u?`<span class="small sub hide-m">${u} 님 · 이용권 <b>${S.credits}건</b></span><a class="btn bo bs" href="#/my">내 결제</a>`:`<button class="btn bo bs" onclick="login()">로그인</button>`)+`<a class="btn bp bs" href="#/admin">관리자</a><a class="btn bo bs hide-m" href="#/how">구현 방식</a>`;
+}
+function login(cb){openM(`<div class="toss-b"><h3>로그인</h3><p class="small sub mt8">유료 기사 열람에는 회원 로그인이 필요합니다. (시연: 아무 값이나 입력)</p>
+<div class="mt12"><input class="inp" id="lid" value="reader01" aria-label="아이디"></div><div class="mt8"><input class="inp" type="password" value="demo" aria-label="비밀번호"></div>
+<button class="btn bp mt16" style="width:100%" id="lgo">로그인</button><p class="small muted mt12">실제 구현: 기존 워드프레스 회원 체계 또는 통합회원 SSO(OAuth/OIDC) 연결</p></div>`);
+ $('#lgo').onclick=()=>{S.user=$('#lid').value||'reader01';save();closeM();nav();toast('로그인되었습니다.');if(typeof cb==='function')cb();else render()}}
+function logout(){S.user=null;save();render()}
+
+/* ---------- 화면 ---------- */
+window.addEventListener('hashchange',render);
+function render(){nav();window.scrollTo(0,0);const h=location.hash.replace('#','')||'/';const p=h.split('/').filter(Boolean);
+ if(!p.length)return home(); if(p[0]==='a')return article(+p[1]); if(p[0]==='my')return my(); if(p[0]==='admin')return admin(p[1]||'articles'); if(p[0]==='how')return how();
+ $('#app').innerHTML=`<div class="card" style="text-align:center;padding:50px"><h2>페이지를 찾을 수 없습니다</h2><a class="btn bp mt16" href="#/">홈으로</a></div>`}
+function home(){
+ $('#app').innerHTML=`<div class="row between"><div><h2 style="font-size:24px;letter-spacing:-.02em">오늘의 기사</h2><p class="sub small">유료 기사는 건별 결제 또는 묶음 이용권으로 볼 수 있습니다. 한 번 결제한 기사는 기간 제한 없이 다시 볼 수 있어요.</p></div>
+ <div class="row">${S.user?`<button class="btn bo bs" onclick="buyBundleUI()">묶음 이용권 구매</button><button class="btn bo bs" onclick="logout()">로그아웃</button>`:''}</div></div>
+ <div class="grid g3 mt16">${S.articles.map((a,i)=>`<a class="card art" href="#/a/${a.id}"><div class="thumb" style="background:linear-gradient(135deg,${COLORS[i%8]},#0b1220)">${a.cat}</div>
+ <div class="row">${a.paid?(owns(a.id)?'<span class="badge own">구매함</span>':'<span class="badge paid">유료</span>'):'<span class="badge free">무료</span>'}<span class="meta">${a.date}</span></div><h3>${a.title}</h3><span class="meta">${a.author}</span></a>`).join('')}</div>
+ <div class="note mt24">시연 순서 ① 유료 기사 클릭 → 본문이 잠긴 것 확인 ② 로그인 후 <b>건별 결제</b> 또는 <b>묶음 이용권</b> 구매 ③ 이용권으로 다른 기사 열람(1건 차감) ④ 같은 기사를 다시 열면 차감 없음 ⑤ 관리자에서 기사 유료 설정·결제·환불(환불 시 열람 권한 회수) 확인</div>`}
+function article(id){const a=A(id);if(!a)return render();const i=S.articles.indexOf(a);
+ const open=!a.paid||owns(id);
+ const body=open?BODY.map(p=>`<p>${p}</p>`).join(''):`<p>${BODY[0]}</p>`;
+ $('#app').innerHTML=`<article class="reader"><a href="#/" class="small sub">← 목록으로</a><div class="row mt12"><span class="badge ${a.paid?(owns(id)?'own':'paid'):'free'}">${a.paid?(owns(id)?'구매한 기사':'유료 기사'):'무료 기사'}</span><span class="meta">${a.cat} · ${a.date} · ${a.author}</span></div>
+ <h1>${a.title}</h1><div class="hero" style="background:${open?`linear-gradient(135deg,${COLORS[i%8]},#0b1220)`:'repeating-linear-gradient(45deg,#e5e7eb,#e5e7eb 10px,#f3f4f6 10px,#f3f4f6 20px)'};color:${open?'#fff':'#6b7280'}">${open?'대표 이미지':'🔒 사진은 결제 후 표시됩니다 (서명된 주소로만 제공)'}</div>
+ <div class="body">${body}</div>
+ ${open?(a.paid?`<div class="note mt16">✓ 구매한 기사입니다. 기간 제한 없이 다시 볼 수 있고, 다시 열어도 결제나 이용권 차감이 일어나지 않습니다.</div>`:''):paywall(a)}</article>`}
+function paywall(a){
+ const u=S.user;
+ return `<div class="lockbox"><div class="pw"><h3>🔒 이 기사는 유료 기사입니다</h3><p class="sub small mt8">결제 전에는 본문이 서버에서 내려오지 않습니다. (페이지 소스에도 없음)</p>
+ ${!u?`<button class="btn bp mt16" style="width:100%" onclick="login(()=>article(${a.id}))">로그인하고 이어서 보기</button>`:`
+ <div class="opts"><button class="opt" onclick="payOne(${a.id})"><b>이 기사만 결제</b><div class="pr">${won(PRICE)}</div><small>카드 · 휴대폰 · 간편결제</small></button>
+ <button class="opt" ${S.credits<1?'disabled style="opacity:.5"':''} onclick="useCredit(${a.id})"><b>이용권 1건 사용</b><div class="pr">남은 ${S.credits}건</div><small>${S.credits<1?'보유한 이용권이 없습니다':'사용 후 '+(S.credits-1)+'건 남음'}</small></button></div>
+ <p class="small sub mt16"><b>묶음 이용권</b> — 많이 살수록 할인</p>
+ <div class="bundles">${BUNDLES.map(b=>`<button class="bun" onclick="payBundle(${b.n})"><div class="n">${b.n}건</div><div class="p">${won(b.p)}</div><div class="d">${b.d} 할인</div></button>`).join('')}</div>`}
+ </div></div>`}
+function buyBundleUI(){openM(`<div class="toss-b"><h3>묶음 이용권</h3><p class="small sub mt8">유료 기사를 열 때마다 1건씩 차감됩니다. 이미 산 기사를 다시 열 때는 차감되지 않습니다.</p><div class="bundles">${BUNDLES.map(b=>`<button class="bun" onclick="payBundle(${b.n})"><div class="n">${b.n}건</div><div class="p">${won(b.p)}</div><div class="d">${b.d} 할인</div></button>`).join('')}</div><button class="btn bo mt16" style="width:100%" onclick="closeM()">닫기</button></div>`)}
+
+/* ---------- 결제 (토스페이먼츠 시연 창) ---------- */
+let pending=null;
+function tossUI(o){pending=o;
+ openM(`<div class="toss-h"><b>결제하기</b><span class="small">토스페이먼츠 (시연)</span></div><div class="toss-b">
+ <div class="row between"><span class="sub">${o.label}</span><b style="font-size:20px">${won(o.amount)}</b></div>
+ <div class="pm">${['카드','휴대폰','간편결제'].map((m,i)=>`<button class="${i===0?'on':''}" onclick="document.querySelectorAll('.pm button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">${m}</button>`).join('')}</div>
+ <p class="small muted">주문번호 ${o.orderId} · 같은 주문번호는 한 번만 승인됩니다(중복 승인 방지)</p>
+ <button class="btn bt mt16" style="width:100%" id="paybtn" onclick="approve()">${won(o.amount)} 결제</button><button class="btn bo mt8" style="width:100%" onclick="closeM()">취소</button></div>`)}
+function approve(){const o=pending;if(!o)return;
+ if(S.orders.find(x=>x.id===o.orderId)){toast('이미 승인된 주문입니다. 중복 결제를 막았습니다.');return}
+ const method=(document.querySelector('.pm button.on')||{}).textContent||'카드';
+ S.orders.unshift({id:o.orderId,user:S.user,type:o.type,item:o.item,amount:o.amount,method,status:'결제 완료',at:now(),aid:o.aid||null,n:o.n||0});
+ if(o.type==='건별'){S.owned[o.aid]={by:'건별',order:o.orderId}}
+ else{S.credits+=o.n;S.creditLog.unshift({at:now(),chg:'+'+o.n,why:`${o.n}건 이용권 구매 (${o.orderId})`,left:S.credits})}
+ pending=null;save();closeM();
+ if(o.type==='건별'){toast('결제가 완료되었습니다. 본문이 열렸어요.');article(o.aid)}else{toast(`이용권 ${o.n}건이 충전되었습니다.`);render()}}
+function payOne(aid){tossUI({type:'건별',aid,item:'기사 #'+aid,label:'기사 1건 결제',amount:PRICE,orderId:'ORD-'+(++S.seq)});save()}
+function payBundle(n){const b=BUNDLES.find(x=>x.n===n);if(!S.user)return login(()=>payBundle(n));tossUI({type:'묶음 '+n+'건',n,item:'이용권 '+n+'건',label:`묶음 이용권 ${n}건`,amount:b.p,orderId:'ORD-'+(++S.seq)});save()}
+function useCredit(aid){if(owns(aid))return article(aid);if(S.credits<1)return toast('이용권이 없습니다.');
+ S.credits--;S.owned[aid]={by:'이용권'};S.creditLog.unshift({at:now(),chg:'-1',why:'기사 #'+aid+' 열람',left:S.credits});save();toast(`이용권 1건을 사용했습니다. 남은 이용권 ${S.credits}건`);article(aid)}
+
+/* ---------- 내 결제 ---------- */
+function my(){if(!S.user){$('#app').innerHTML=`<div class="card" style="text-align:center;padding:40px"><p>로그인이 필요합니다.</p><button class="btn bp mt16" onclick="login()">로그인</button></div>`;return}
+ const mine=S.orders.filter(o=>o.user===S.user);
+ $('#app').innerHTML=`<h2>내 결제</h2><div class="grid g3 mt16"><div class="card kpi"><div class="l">남은 이용권</div><div class="v">${S.credits}건</div></div><div class="card kpi"><div class="l">구매한 기사</div><div class="v">${Object.keys(S.owned).length}건</div></div><div class="card kpi"><div class="l">결제 건수</div><div class="v">${mine.length}건</div></div></div>
+ <h3 class="mt24" style="font-size:16px">결제 내역 <span class="badge b-mute">선택 기능</span></h3><div class="tbl mt8">${tbl(['주문번호','구분','내용','금액','수단','상태','일시',''],mine.map(o=>[o.id,o.type,o.item,won(o.amount),o.method,st(o.status),o.at,o.status==='결제 완료'?`<button class="btn bo bs" onclick="reqRefund('${o.id}')">환불 요청</button>`:'']),[3])}</div>
+ <h3 class="mt24" style="font-size:16px">이용권 사용 기록</h3><div class="tbl mt8">${tbl(['일시','변동','내용','잔여'],S.creditLog.map(c=>[c.at,c.chg,c.why,c.left+'건']),[])}</div>`}
+function reqRefund(id){const o=S.orders.find(x=>x.id===id);o.status='환불 요청';save();toast('환불을 요청했습니다. 관리자 확인 후 처리됩니다.');my()}
+
+/* ---------- 관리자 ---------- */
+function admin(tab){
+ const T={articles:'기사 유료 설정',orders:'결제·환불 내역',credits:'이용권 현황',settings:'가격 설정'};
+ const total=S.orders.filter(o=>o.status==='결제 완료').reduce((s,o)=>s+o.amount,0);
+ let body='';
+ if(tab==='articles')body=`<div class="note">기사 편집 화면(워드프레스 글 편집기)의 오른쪽 패널에 <b>'유료 기사'</b> 체크박스가 추가됩니다. 아래는 목록에서 바로 바꾸는 화면입니다.</div><div class="tbl mt12">${tbl(['ID','제목','분류','유료',''],S.articles.map(a=>[a.id,a.title,a.cat,`<button class="switch ${a.paid?'on':''}" aria-label="유료 설정" onclick="togglePaid(${a.id})"></button>`,a.paid?'<span class="badge paid">유료</span>':'<span class="badge free">무료</span>']),[])}</div>`;
+ if(tab==='orders')body=`<div class="grid g4"><div class="card kpi"><div class="l">결제 완료 매출</div><div class="v">${won(total)}</div></div><div class="card kpi"><div class="l">건별 결제</div><div class="v">${S.orders.filter(o=>o.type==='건별').length}건</div></div><div class="card kpi"><div class="l">묶음 결제</div><div class="v">${S.orders.filter(o=>o.type!=='건별').length}건</div></div><div class="card kpi"><div class="l">환불 요청</div><div class="v">${S.orders.filter(o=>o.status==='환불 요청').length}건</div></div></div>
+ <div class="tbl mt16">${tbl(['주문번호','회원','구분','내용','금액','수단','상태','일시','처리'],S.orders.map(o=>[o.id,o.user,o.type,o.item,won(o.amount),o.method,st(o.status),o.at,(o.status==='결제 완료'||o.status==='환불 요청')?`<button class="btn bo bs" onclick="refund('${o.id}')">환불 처리</button>`:'']),[4])}</div>
+ <p class="small muted mt8">환불 처리 = 토스페이먼츠 결제 취소 API 호출 + 열람 권한 회수(건별) 또는 남은 이용권 차감(묶음). 실제로는 취소 웹훅으로도 같은 처리를 합니다.</p>`;
+ if(tab==='credits')body=`<div class="tbl">${tbl(['일시','변동','내용','잔여'],S.creditLog.map(c=>[c.at,c.chg,c.why,c.left+'건']),[])}</div>${S.creditLog.length?'':'<p class="muted small mt8">로그인한 회원이 이용권을 사거나 쓰면 기록됩니다.</p>'}`;
+ if(tab==='settings')body=`<div class="card" style="max-width:520px"><div class="row between"><span>기사 1건 가격</span><b>${won(PRICE)}</b></div>${BUNDLES.map(b=>`<div class="row between mt12"><span>묶음 ${b.n}건 (${b.d} 할인)</span><b>${won(b.p)}</b></div>`).join('')}<p class="small muted mt16">모든 기사 가격은 같고, 관리자가 이 화면에서 바꿉니다. 이용권 유효기간·환불 규칙은 미팅에서 정합니다.</p></div>`;
+ $('#app').innerHTML=`<div class="row between"><h2>관리자 · ${T[tab]}</h2><a class="btn bo bs" href="#/">사이트 보기</a></div><div class="tabs mt12">${Object.entries(T).map(([k,v])=>`<a class="tab ${k===tab?'on':''}" href="#/admin/${k}">${v}</a>`).join('')}</div>${body}<div class="mt24"><button class="btn bo bs" onclick="if(confirm('시연 데이터를 처음으로 되돌릴까요?')){S=seed();save();render()}">↺ 시연 데이터 초기화</button></div>`}
+function togglePaid(id){const a=A(id);a.paid=!a.paid;save();toast(`#${id} 기사를 ${a.paid?'유료':'무료'}로 바꿨습니다.`);admin('articles')}
+function refund(id){const o=S.orders.find(x=>x.id===id);
+ if(o.type==='건별'){const aid=o.aid||+(o.item.match(/\d+/)||[])[0];if(S.owned[aid]&&S.owned[aid].order===o.id){delete S.owned[aid]}}
+ else if(o.n){const take=Math.min(S.credits,o.n);if(o.user===S.user){S.credits-=take;S.creditLog.unshift({at:now(),chg:'-'+take,why:`환불로 남은 이용권 회수 (${o.id})`,left:S.credits})}}
+ o.status='환불 완료';save();toast('환불 처리했습니다. 열람 권한(또는 남은 이용권)을 회수했습니다.');admin('orders')}
+function st(s){return `<span class="badge ${s==='결제 완료'?'b-ok':s==='환불 요청'?'b-warn':'b-bad'}">${s}</span>`}
+function tbl(h,rows,numCols){if(!rows.length)return '<div style="padding:20px;text-align:center" class="muted small">내역이 없습니다.</div>';return `<table><thead><tr>${h.map((x,i)=>`<th class="${numCols.includes(i)?'num':''}">${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${numCols.includes(i)?'num':''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+
+/* ---------- 구현 방식 ---------- */
+function how(){$('#app').innerHTML=`<div class="reader card tech"><h2>실제 워드프레스에서는 이렇게 만듭니다</h2>
+<p class="sub mt8">이 데모의 화면 흐름을 워드프레스 전용 플러그인 하나로 구현합니다. 테마를 바꿔도 기능이 유지되고, 기존 사이트 디자인은 건드리지 않습니다.</p>
+<h4>1. 본문·사진 보호 (페이지 소스에서도 차단)</h4><p>결제 전에는 <code>the_content</code> 필터에서 본문을 서버 단에서 잘라 미리보기 문단만 내보냅니다. 사진은 업로드 폴더 직접 접근을 막고, 권한을 확인한 뒤 짧은 시간만 유효한 서명 주소로 제공합니다. REST API·RSS·검색 결과로도 본문이 새지 않게 같은 규칙을 적용합니다.</p>
+<h4>2. 회원 · SSO</h4><p>워드프레스 회원을 그대로 쓰거나, 통합회원(SSO)은 OAuth/OIDC로 워드프레스 로그인에 연결합니다.</p>
+<h4>3. 토스페이먼츠 · 중복 승인 방지 · 취소 시 권한 회수</h4><p>주문을 먼저 만들고 주문번호를 멱등키로 써서 같은 주문은 한 번만 승인합니다. 승인 금액은 서버에 저장된 주문 금액과 대조합니다. 결제 취소·환불은 웹훅으로 받아 열람 권한을 회수하거나 남은 이용권을 차감합니다.</p>
+<h4>4. 데이터</h4><p>주문, 열람 권한(회원×기사), 이용권 원장(충전·차감 기록) 테이블을 따로 두어 내역 조회와 대사가 쉽게 합니다.</p></div>`}
+render();
+</script>
+</body>
+</html>
